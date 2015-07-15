@@ -1,0 +1,805 @@
+\documentclass{article} % For LaTeX2e
+\usepackage{nips14submit_e,times}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+%\documentstyle[nips14submit_09,times,art10]{article} % For LaTeX 2.09
+
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\def\eQb#1\eQe{\begin{eqnarray*}#1\end{eqnarray*}}
+
+\providecommand{\e}[1]{\ensuremath{\times 10^{#1}}}
+\providecommand{\pb}[0]{\pagebreak}
+
+
+\newenvironment{claim}[1]{\par\noindent\underline{Claim:}\space#1}{}
+\newtheoremstyle{quest}{\topsep}{\topsep}{}{}{\bfseries}{}{ }{\thmname{#1}\thmnote{ #3}.}
+\theoremstyle{quest}
+\newtheorem*{definition}{Definition}
+\newtheorem*{theorem}{Theorem}
+\newtheorem*{question}{Question}
+\newtheorem*{exercise}{Exercise}
+\newtheorem*{challengeproblem}{Challenge Problem}
+\newtheorem*{solution}{Solution}
+\usepackage{verbatimbox}
+\usepackage{listings}
+\title{Numerical Computing: Assignment IX}
+
+
+\author{
+Youngduck Choi \\
+CILVR Lab \\
+CIMS, New York University \\
+\texttt{yc1104@nyu.edu} \\
+}
+
+
+% The \author macro works with any number of authors. There are two commands
+% used to separate the names and addresses of multiple authors: \And and \AND.
+%
+% Using \And between authors leaves it to \LaTeX{} to determine where to break
+% the lines. Using \AND forces a linebreak at that point. So, if \LaTeX{}
+% puts 3 of 4 authors names on the first line, and the last on the second
+% line, try using \AND instead of \And before the third author name.
+
+\newcommand{\fix}{\marginpar{FIX}}
+\newcommand{\new}{\marginpar{NEW}}
+
+\nipsfinalcopy % Uncomment for camera-ready version
+
+\begin{document}
+
+
+\maketitle
+
+\begin{abstract}
+This ends my year long journey with Professor Wright.
+\end{abstract}
+
+\section{Solutions to the problems}
+
+\begin{question}[9.1. Rank-one update]
+\end{question}
+\begin{solution}
+\textbf{(a)}
+Let $P$ be a matrix such that 
+\[
+P = I - \dfrac{ss^T}{(s^{T}s)}
+\]
+where $I$ is the $n$-dimensional identity and $s$ is a real vector.
+We want to show that $P^2 = P$. Squaring the matrix $P$ yields
+\eQb
+P^2 &=& (I - \dfrac{ss^T}{(s^Ts)})^2. 
+\eQe
+Distributing the terms on the RHS we obtain
+\eQb
+P^2 &=& I\cdot I - I \cdot \dfrac{ss^T}{(s^{T}s)} - \dfrac{ss^T}{(s^{T}s)} \cdot I +  
+\dfrac{ss^T}{(s^{T}s)} \cdot \dfrac{ss^T}{(s^{T}s)} 
+\eQe
+where $\cdot$ denotes the matrix multiplication with vector multiplication pre-defined. 
+We know that for any arbitrary matrix $X$,
+$I \cdot X = X \cdot I = X$ holds. Hence, we can simplify the above equation as
+\eQb
+P^2 &=& I - \dfrac{ss^T}{(s^{T}s)} - \dfrac{ss^T}{(s^{T}s)} + \dfrac{ss^T}{(s^{T}s)}
+\cdot \dfrac{ss^T}{(s^{T}s)}.
+\eQe
+Notice that the third additive term on the right handside,
+using the associativity of vector multiplication, can be viewed as
+$\dfrac{s(s^{T}s)s^T}{(s^{T}s)^2}$. With the cancellations of the 
+scalar terms $(s^Ts)$, we see that the third term equals $\dfrac{ss^T}{(s^Ts)}$.
+Therefore,
+one of the non-identity term cancels out with the third term and we have
+\eQb
+P^2 &=& I - \dfrac{ss^T}{(s^Ts)}, \\
+\eQe
+thereby showing that $P^2 = P$ as desired.
+
+\pagebreak
+
+\textbf{(b)}
+We wish to compute the $n$ eigenvalues of $P$. Notice that $I - \dfrac{ss^T}{(s^Ts)}$ is a rank-one update
+with a unit matrix norm, applied to the identity. Therefore, we have an eigenvalue of $1$ with $n-1$ multiplicity
+and $0$ with multiplicity $1$. The eigenvector can be computed by reading of the rank position of the update matrix.
+\end{solution}
+
+
+\begin{question}[9.2 Eigenvalues of $AB$]
+\end{question}
+\begin{solution}
+Let $A$ and $B$ be real $n \times n$ matrices, such that
+\eQb
+A = \begin{pmatrix}
+1 & -1 \\
+1 & 1 \\
+\end{pmatrix} \text{ and  } 
+B = \begin{pmatrix}
+1 & 1 \\
+0 & 1 \\
+\end{pmatrix}.
+\eQe
+Denote the sets of eigenvalues of $A$ and $B$ as $\lambda_A$ and $\lambda_B$ respectively.
+Notice that $A$ is chosen to be a rotational matrix of $\dfrac{\pi}{2}$ with $\sqrt{2}$ scaling,
+which will yield complex eigenvalues $1 \pm i$. $B$ is a triangular matrix, and therefore we can
+obtain its eigenvalues from the diagonal entries.
+Then, we have that 
+\eQb
+\lambda_A &=& \{ 1 + i , 1 - i \} \\
+\lambda_B &=& \{ 1 \},
+\eQe
+where the eigenvalue $1$ from $\lambda_B$ has a multiplicity of $2$. Consider the product
+matrix $AB$, which can be written as 
+\eQb
+AB &=& \begin{pmatrix}
+1 & 0 \\
+1 & 2 \\
+\end{pmatrix}
+\eQe
+As $AB$ is a triangular matrix the eigenvalue set of $AB$ is 
+\[
+\lambda_{AB} = \{ 1, 2 \}. 
+\]
+It is clear that $\lambda_{AB}$ cannot be constructed from the pairwise product form $\lambda_A$ and
+$\lambda_B$. Hence, we have shown through a counter-example that eigenvalues of $AB$ are not
+the pairwise products of the eigenvalues of $A$ and $B$.
+
+\end{solution}
+
+
+\pagebreak
+
+\begin{question}[9.3 Inverse Power Method with Shift]
+\end{question}
+\begin{solution}
+The implementation for inverse iteration with shift used in this exercise is included
+in the appendix.
+
+\smallskip
+
+\textbf{(a)}
+We perform $7$ steps of inverse iteration with 
+\eQb
+A = \begin{pmatrix}
+3 & 10 \\
+3 & 2 \\
+\end{pmatrix}
+\text{, }
+y_0 = \begin{pmatrix}
+1 \\
+1 \\
+\end{pmatrix}
+\text{, and }
+\sigma = 7.
+\eQe
+
+\begin{small}
+\begin{verbbox}
+EDU>> inverse_iteration
+sigma =
+     7
+A =
+     3    10
+     3     2
+I =
+     1     0
+     0     1
+y_k =
+     1
+     1
+A_shift =
+    -4    10
+     3    -5
+k =
+
+     2
+lambda_k =
+
+     7.454545454545454e+00
+y_k =
+     9.061831399952656e-01
+     4.228854653311239e-01
+err_k =
+     5.454545454545459e-01
+k =
+     3
+lambda_k =
+     8.020104244229337e+00
+y_k =
+     8.931918083968501e-01
+     4.496758759515176e-01
+err_k =
+     2.010424422933710e-02
+k =
+     4
+lambda_k =
+     7.998083667239799e+00
+y_k =
+     8.945501194069496e-01
+     4.469676541641597e-01
+err_k =
+     1.916332760201200e-03
+\end{verbbox}
+\begin{figure}[h!]
+\centering
+\theverbbox
+\caption{Inverse power method for $(a)$ upto k = 4}
+\end{figure}
+\end{small}
+
+\pagebreak
+
+\begin{small}
+\begin{verbbox}
+EDU>> inverse_iteration
+k =
+     5
+lambda_k =
+     8.000192586544665e+00
+y_k =
+     8.944148920726019e-01
+     4.472381925090433e-01
+err_k =
+     1.925865446654740e-04
+k =
+     6
+lambda_k =
+     7.999980750865574e+00
+y_k =
+     8.944284208317694e-01
+     4.472111358277962e-01
+err_k =
+     1.924913442596932e-05
+k =
+     7
+lambda_k =
+     8.000001925008656e+00
+y_k =
+     8.944270680161217e-01
+     4.472138414674616e-01
+err_k =
+     1.925008655589977e-06
+k =
+     8
+lambda_k =
+     7.999999807500087e+00
+y_k =
+     8.944272032982891e-01
+     4.472135709032105e-01
+err_k =
+     1.924999128988247e-07
+\end{verbbox}
+\begin{figure}[h!]
+\centering
+\theverbbox
+\caption{Inverse power method for $(a)$ from k = 5 to k = 8}
+\end{figure}
+\end{small}
+As the ratio of the largest-magnitude to next-largest magnitude eigenvalues is $\dfrac{1}{10}$,
+we see rapid convergence to the true value of $\lambda = 8$.
+
+\pagebreak
+
+\textbf{(b)}
+We perform $7$ steps of inverse iteration with 
+\eQb
+A = \begin{pmatrix}
+3 & -1 \\
+0 & 2 \\
+\end{pmatrix}
+\text{, }
+y_0 = \begin{pmatrix}
+-1 \\
+1 \\
+\end{pmatrix}
+\text{, and }
+\sigma = 3.1.
+\eQe
+
+\begin{small}
+\begin{verbbox}
+EDU>> inverse_iteration
+sigma =
+     3.100000000000000e+00
+A =
+     3    -1
+     0     2
+I =
+     1     0
+     0     1
+y_k =
+    -1
+     1
+A_shift =
+    -1.000000000000001e-01    -1.000000000000000e+00
+                         0    -1.100000000000000e+00
+k =
+     2
+lambda_k =
+     3.050000000000000e+00
+y_k =
+     9.988681377244375e-01
+    -4.756514941544944e-02
+err_k =
+     5.000000000000027e-02
+k =
+     3
+lambda_k =
+     3.003951007506914e+00
+y_k =
+    -9.999913914439560e-01
+     4.149341873211441e-03
+err_k =
+     3.951007506914461e-03
+k =
+     4
+lambda_k =
+     3.000374238658229e+00
+y_k =
+     9.999999293877241e-01
+    -3.757985454294350e-04
+err_k =
+     3.742386582294976e-04
+\end{verbbox}
+\begin{figure}[h!]
+\centering
+\theverbbox
+\caption{Inverse power method for $(b)$ upto k = 4}
+\end{figure}
+\end{small}
+
+\pagebreak
+
+\begin{small}
+\begin{verbbox}
+k =
+     5
+lambda_k =
+     3.000034139004426e+00
+y_k =
+    -9.999999994168260e-01
+     3.415183905661792e-05
+err_k =
+     3.413900442605922e-05
+k =
+     6
+lambda_k =
+     3.000003104510225e+00
+y_k =
+     9.999999999951807e-01
+    -3.104616253892986e-06
+err_k =
+     3.104510225337975e-06
+k =
+     7
+lambda_k =
+     3.000000282236169e+00
+y_k =
+    -9.999999999999603e-01
+     2.822370446846058e-07
+err_k =
+     2.822361686583008e-07
+k =
+     8
+lambda_k =
+     3.000000025657899e+00
+y_k =
+     9.999999999999998e-01
+    -2.565790656986363e-08
+err_k =
+     2.565789936070928e-08
+\end{verbbox}
+\begin{figure}[h!]
+\centering
+\theverbbox
+\caption{Inverse power method for $(b)$ from k = 5 to k = 8}
+\end{figure}
+\end{small}
+
+Again, we observe fast convergence to the true largest eigenvalue, $\lambda = 3$.
+Through computations, one can verify that $A_{\sigma}^{-1}$ yields a large value for 
+the ratio of the largest-magnitude to next-largest magnitude eigenvalues, approximating
+$\dfrac{1}{10}$ as before. 
+
+\pagebreak
+
+\textbf{(c)}
+We perform $7$ steps of inverse iteration with 
+\eQb
+A = \begin{pmatrix}
+3 & -1 \\
+0 & 2 \\
+\end{pmatrix}
+\text{, }
+y_0 = \begin{pmatrix}
+1 \\
+1 \\
+\end{pmatrix}
+\text{, and }
+\sigma = 3.1.
+\eQe
+
+\begin{small}
+\begin{verbbox}
+K>> inverse_iteration
+sigma =
+     3.100000000000000e+00
+A =
+     3    -1
+     0     2
+I =
+     1     0
+     0     1
+y_k =
+     1
+     1
+A_shift =
+    -1.000000000000001e-01    -1.000000000000000e+00
+                         0    -1.100000000000000e+00
+k =
+     2
+lambda_k =
+     2.550000000000000e+00
+y_k =
+    -7.071067811865474e-01
+    -7.071067811865477e-01
+err_k =
+     4.500000000000002e-01
+k =
+     3
+lambda_k =
+     1.999999999999998e+00
+y_k =
+     7.071067811865460e-01
+     7.071067811865490e-01
+err_k =
+     1.000000000000002e+00
+k =
+     4
+lambda_k =
+     1.999999999999977e+00
+y_k =
+    -7.071067811865313e-01
+    -7.071067811865638e-01
+err_k =
+     1.000000000000023e+00
+\end{verbbox}
+\begin{figure}[h!]
+\centering
+\theverbbox
+\caption{Inverse power method for $(c)$ upto k = 4}
+\end{figure}
+\end{small}
+
+\pagebreak
+
+\begin{small}
+\begin{verbbox}
+k =
+     5
+lambda_k =
+     1.999999999999747e+00
+y_k =
+     7.071067811863688e-01
+     7.071067811867262e-01
+err_k =
+     1.000000000000253e+00
+k =
+     6
+lambda_k =
+     1.999999999997220e+00
+y_k =
+    -7.071067811845821e-01
+    -7.071067811885129e-01
+err_k =
+     1.000000000002780e+00
+k =
+     7
+lambda_k =
+     1.999999999969426e+00
+y_k =
+     7.071067811649285e-01
+     7.071067812081664e-01
+err_k =
+     1.000000000030574e+00
+k =
+     8
+lambda_k =
+     1.999999999663688e+00
+y_k =
+    -7.071067809487395e-01
+    -7.071067814243556e-01
+err_k =
+     1.000000000336312e+00
+\end{verbbox}
+\begin{figure}[h!]
+\centering
+\theverbbox
+\caption{Inverse power method for $(c)$ from k = 5 to k = 8}
+\end{figure}
+\end{small}
+In this example, we clearly see that a poor choice of the initial value of $y$ leads
+to divergence in the computation of the largest eigenvalue. The chosen $y = (1,-1)$ in this example
+is not a good approximation to the target eigenvector as the previous example with $y = (1,1)$. 
+Unlike the previous example,
+the approximated eigenvalue, $\lambda_k$ does not converge to the true eigenvalue $\lambda = 3$.
+\end{solution}
+
+\pagebreak
+
+\begin{question}[9.4 Rayleigh quotient iteration]
+\end{question}
+\begin{solution}
+The implementation of Rayleigh quotient iteration used in this exercise is included in the 
+appendix.
+
+\smallskip
+
+\textbf{(a)}
+We compute the eigenvalues and eigenvectors of $A$. The below figure contains the
+eigenvalues as the diagnoal entires of the $D$ matrix and the eigenvectors as the
+columns of the matrix $V$.
+\begin{small}
+\begin{verbbox}
+K>> A = [3 1 4; 1 3 4 ; 4 4 0]
+A =
+     3     1     4
+     1     3     4
+     4     4     0
+K>> [V,D] = eig(A)
+V =
+4.082482904638630e-01     7.071067811865475e-01     5.773502691896256e-01
+4.082482904638629e-01    -7.071067811865475e-01     5.773502691896255e-01
+-8.164965809277259e-01                         0     5.773502691896258e-01
+D =
+-4.000000000000001e+00                         0                         0
+                     0     2.000000000000000e+00                         0
+                     0                         0     7.999999999999999e+00
+\end{verbbox}
+\begin{figure}[h!]
+\centering
+\theverbbox
+\caption{Eigenvalues and eigenvectors of $A$}
+\end{figure}
+\end{small}
+
+\smallskip
+
+\textbf{(b)}
+We take the eigenvectors from the first and second columns of $V$. Notice that they are
+indeed unit vectors. Hence, by multiplying those two eigenvectors with $0.65$ scalar
+we obtain the vectors that differ in norm by $0.35$.
+\begin{small}
+\begin{verbbox}
+K>> y_1
+y_1 =
+     4.082482904638630e-01
+     4.082482904638629e-01
+    -8.164965809277259e-01
+K>> y_1_adjusted
+y_1_adjusted =
+     2.653613888015109e-01
+     2.653613888015109e-01
+    -5.307227776030219e-01
+K>> y_2
+y_2 =
+     7.071067811865475e-01
+    -7.071067811865475e-01
+                         0
+K>> y_2_adjusted
+y_2_adjusted =
+
+     4.596194077712559e-01
+    -4.596194077712559e-01
+                         0
+\end{verbbox}
+\begin{figure}[h!]
+\centering
+\theverbbox
+\caption{Adjusted Vectors}
+\end{figure}
+\end{small}
+
+\pagebreak
+
+\textbf{(c)}
+We have two separate runs for using two adjusted vectors.
+The first one uses the adjusted vector from the first eigenvector.
+As one can see in the below figure, the iterates correctly converge to the 
+eigenvalue in two iterations. The perturbed eigenvector converges to the
+true eigenvector of the matrix $A$.
+\begin{small}
+\begin{verbbox}
+K>> rayleigh
+A =
+     3     1     4
+     1     3     4
+     4     4     0
+I =
+     1     0     0
+     0     1     0
+     0     0     1
+y_k =
+     2.653613888015109e-01
+     2.653613888015109e-01
+    -5.307227776030219e-01
+sigma_k =
+    -1.690000000000000e+00
+k =
+     0
+cond_k =
+     4.194805194805193e+00
+err_k =
+     2.310000000000000e+00
+z_k =
+    -1.148750600872342e-01
+    -1.148750600872341e-01
+     2.297501201744683e-01
+y_k =
+    -4.082482904638631e-01
+    -4.082482904638630e-01
+     8.164965809277260e-01
+sigma_k =
+    -4
+k =
+     1
+cond_k =
+     6.938077456519682e+16
+err_k =
+     0
+z_k =
+    -2.757880273211542e+15
+    -2.757880273211544e+15
+     5.515760546423086e+15
+y_k =
+    -4.082482904638630e-01
+    -4.082482904638631e-01
+     8.164965809277260e-01
+sigma_k =
+    -4
+\end{verbbox}
+\begin{figure}[h!]
+\centering
+\theverbbox
+\caption{Rayleigh with the adjusted vector from the first eigenvector}
+\end{figure}
+\end{small}
+
+\pagebreak
+
+The second run uses the adjusted vector from the second eigenvector. 
+As one can see, the iterates do not converge and the condition number of
+the matrix $A - \sigma_k I$ blows up even before the eigenvalue estimation
+gets close to the true value. The perturbed eigenvector does not converge
+to the real eigenvector from the matrix $A$.
+\begin{small}
+\begin{verbbox}
+k =
+     1
+cond_k =
+     2.903747280940554e+16
+err_k =
+     6
+Warning: Matrix is close to singular or badly scaled.
+Results may be inaccurate. RCOND =  4.194176e-17. 
+> In rayleigh at 17
+  In inverse_iteration at 16 
+z_k =
+    -1.685925442727410e+15
+     1.685925442727410e+15
+    -9.243225897863361e-03
+y_k =
+    -7.071067811865475e-01
+     7.071067811865475e-01
+    -3.876771502922898e-18
+sigma_k =
+     2.000000000000000e+00
+k =
+     2
+cond_k =
+     8.158537537569432e+15
+err_k =
+     6
+Warning: Matrix is close to singular or badly scaled.
+ Results may be inaccurate. RCOND =  4.194176e-17. 
+> In rayleigh at 17
+  In inverse_iteration at 16 
+\end{verbbox}
+\begin{figure}[h!]
+\centering
+\theverbbox
+\caption{Rayleigh with the second adjusted vector}
+\end{figure}
+\end{small}
+
+\end{solution}
+
+\pagebreak
+
+\begin{question}[9.5 Eigenvalues continued ]
+\end{question}
+\begin{solution}
+Let $K$ be a symmetric $2 \times 2$ matrix, such that
+\eQb
+K &=& \begin{pmatrix}
+h & a \\
+a & 0 \\
+\end{pmatrix},
+\eQe
+where $h$ and $a$ are real scalars.
+
+\smallskip
+
+\textbf{(a)} We wish to compute the eigenvalues of $K$. We know that 
+eigenvalues of $K$, denoted as $\lambda$, can be obtained by solving
+\[
+det(A - \lambda I) = 0.
+\]
+Subtracting $\lambda$ from the diagonal terms from $K$, we obtain
+\[
+A - \lambda I = \begin{pmatrix}
+h - \lambda & a \\
+a & -\lambda \\
+\end{pmatrix}.
+\]
+Using the determinant rule for $2 \times 2$ matrix, we get
+\[
+\lambda^2 - h\lambda - a^2 = 0.
+\]
+Applying the quadratic formula with respect to the $\lambda$ variable, we can obtain
+an explicit expression for $\lambda$ in terms of $h$ and $a$ as follows:
+\eQb
+\lambda &=& \dfrac{h \pm \sqrt{h^2 + 4a^2}}{2}, \\
+\eQe
+thereby obtaining the expression for the two eigenvalues of $K$ explicitly.
+
+\bigskip
+
+\textbf{(b)} 
+From the derivation in part $(a)$, we have that without loss of
+generality, the two eigenvalues $\lambda_1$ and
+$\lambda_2$ can be expressed as
+\begin{eqnarray}
+\lambda_1 &=& \dfrac{h + \sqrt{h^2 + 4a^2}}{2}, \\
+\lambda_2 &=& \dfrac{h - \sqrt{h^2 + 4a^2}}{2}. 
+\end{eqnarray}
+$K$ will be nonsingular iff $h - a^2 \neq 0$, which directly follows
+from the characterization of nonsingular matrices through determinants.
+$K$ will have a single zero eigenvalue iff $h \neq 0$ and $a = 0$.
+Assume that $h \neq 0$ and $a = 0$. From direct substitutions to
+$\lambda_1$ and $\lambda_2$, we see that 
+it is equivalent to $\lambda_1 \neq 0$ and
+$\lambda_2 = 0$. $K$ cannot have two negative eigenvalues. We consider two separate
+cases. First, assume that $h \geq 0$. Then, as $\sqrt{h^2 + 4a^2} \geq 0$, we have that
+$\lambda_1 \geq 0$. Secondly, assume that $h < 0$. We have $\sqrt{h^2 + 4a^2} \geq -h$. Hence,
+once again, $\lambda_1 \geq 0$ holds. Therefore, we have shown that $K$ cannot have two
+eigenvalues.
+
+\bigskip
+
+\textbf{(c)} 
+As before, without loss of
+generality, we express $\lambda_1$ and $\lambda_2$ with $(1)$ and $(2)$ expressions respectively.
+We consider to two possible cases. First, if $a = 0$, then we have $\lambda_2 = 0$.
+Secondly, if $|a| > 0$, then we have $\sqrt{h^2 + 4a^2} > h$. We can further obtain that
+$0 > h - \sqrt{h^2 + 4a^2}$ which implies that $\lambda_2$ is negative. Hence, we have shown that in all
+cases the two eigenvalues of $K$ cannot both be positive.
+\end{solution}
+
+\pagebreak
+
+\section{Appendix}
+This sections contains the source codes written for the problem set.
+\subsection{Inverse iteration with shift}
+\lstinputlisting[language=Matlab]{inverse_iteration.m}
+\subsection{Rayleigh quotient iteration}
+\lstinputlisting[language=Matlab]{rayleigh.m}
+\end{document}
+
+
